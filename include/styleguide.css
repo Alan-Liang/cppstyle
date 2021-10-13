@@ -1,50 +1,10 @@
 /* General CSS */
-
-body {
-  background-color: #fff;
-  color: #333;
-  font-family: sans-serif;
-  font-size: 10pt;
-  margin-right: 100px;
-  margin-left: 100px;
-}
-
-h1 {
-  text-align: center;
-  font-size: 18pt;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  color: #06c;
-  margin-top: 2em;
-  margin-bottom: 1em;
-  padding: 25px;
-  font-weight:bold;
-}
-
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin-top:1.5em;
-  margin-bottom:.75em;
-}
-
-h1 {font-size:200%;}
-h2 {font-size:167%;}
-h3 {font-size:133%;}
-h4 {font-size:120%;}
-h5 {font-size:110%;}
-
-
 table {
   border: 1px solid #bbb;
   border-spacing: 0;
   border-collapse: collapse;
   margin: 0 0 1.5em;
   vertical-align: middle;
-  width: 100%
 }
 
 td, th {
@@ -55,7 +15,21 @@ td, th {
 
 code, samp, var {
   background-color:#FAFAFA;
-  white-space: nowrap
+  white-space: nowrap;
+}
+
+.linked-header a { color: inherit !important; }
+
+@media (max-width: 800px) {
+  code, samp, var {
+    white-space: normal;
+    word-break: break-word;
+  }
+  .linked-header {
+    max-width: calc(100vw - 32px);
+    word-break: break-word;
+    hyphens: auto;
+  }
 }
 
 pre {
@@ -63,6 +37,12 @@ pre {
   background-color:#FAFAFA;
   border:1px solid #bbb;
   overflow:auto;
+  max-width: calc(100vw - 32px - 2em);
+}
+
+#tocDiv {
+  overflow-x: auto;
+  max-width: calc(100vw - 32px);
 }
 
 pre.prettyprint {
@@ -177,10 +157,6 @@ address {
   border-radius: 3px;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
-}
-
-.ignoreLink {
-  padding: 0px;
 }
 
 .divider{

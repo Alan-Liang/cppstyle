@@ -242,16 +242,12 @@ function hasClass(element, cls) {
  */
 
 // Add the link image to the element.
-function LinkifyHeader(header, fileName, sizePixels) {
+function LinkifyHeader (header) {
   var link = document.createElement('a');
   link.href = '#' + header.id;
   link.setAttribute('alt', 'link to ' + header.id);
-  link.innerHTML =
-      '<img src="include/' + fileName + '"' +
-      ' width=' + sizePixels +
-      ' height=' + sizePixels +
-      ' style="float:left;position:relative;bottom:5px;">';
-  header.appendChild(link);
+  link.innerText = header.innerText
+  header.innerHTML = link.outerHTML;
 }
 
 // Find all elements of the given tag and linkify if
@@ -263,9 +259,8 @@ function LinkifyHeadersForTag(tagName) {
     header = headers[j];
     if (!hasClass(header, 'ignoreLink') && ('id' in header)) {
       if (header.id != '') {
-        LinkifyHeader(header, 'link.png', 21);
-        header.style.left = '-46px';
-        header.style.position = 'relative';
+        LinkifyHeader(header)
+        header.classList.add('linked-header')
       }
     }
   }
