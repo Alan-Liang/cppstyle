@@ -11,7 +11,7 @@
 <body onload="initStyleGuide();">
 <main id="content" style="max-width: 800px;">
 <h1>Alan's C++ Style Guide</h1>
-<p>Based on the <a href="https://google.github.io/styleguide/cppguide.html">Google C++ Style Guide</a>.</p>
+<p>Based on the <a href="https://google.github.io/styleguide/cppguide.html" rel="noopener noreferer">Google C++ Style Guide</a>.</p>
 <div class="horizontal_toc" id="tocDiv"></div>
 
 <h2 id="C++_Version">C++ Version</h2>
@@ -3005,7 +3005,7 @@ std::array numbers = { 4, 8, 15, 16, 23, 42 };</pre>
   field names. We recommend using a comment to indicate the name of the
   underlying field, if it doesn't match the name of the binding, using the
   same syntax as for function parameter comments:</p>
-  <pre>auto [/*field_name1=*/ bound_name1, /*field_name2=*/ bound_name2] = ...</pre>
+  <pre>auto [/* field_name1 */ bound_name1, /* field_name2 */ bound_name2] = ...</pre>
 <p>As with function parameter comments, this can enable tools to detect if
   you get the order of the fields wrong.</p>
 
@@ -3934,7 +3934,7 @@ one may be you!</p>
 
 <h3 id="Comment_Style">Comment Style</h3>
 
-<p>Use either the <code>//</code> for single-line comments and <code>/* */</code>
+<p>Use the <code>//</code> for single-line comments and <code>/* */</code>
 for multi-line comments.</p>
 
 <h3 id="File_Comments">File Comments</h3>
@@ -3969,7 +3969,7 @@ be used.</p>
  * Iterates over the contents of a GargantuanTable.
  * @example
  * std::unique_ptr&lt;GargantuanTableIterator&gt; iter = table-&gt;newIterator();
- * for (iter-&gt;seek("foo"); !iter-&gt;done(); iter-&gt;Next()) {
+ * for (iter-&gt;seek("foo"); !iter-&gt;done(); iter-&gt;next()) {
  *   process(iter-&gt;key(), iter-&gt;value());
  * }
  */
@@ -4374,19 +4374,11 @@ not fit on a single line as you would wrap arguments in a
 
 <p>If you have too much text to fit on one line:</p>
 
-<pre>ReturnType ClassName::reallyLongFunctionName(Type parName1, Type parName2,
-                                             Type parName3) {
-  doSomething();
-  ...
-}
-</pre>
-
-<p>or if you cannot fit even the first parameter:</p>
-
 <pre>ReturnType LongClassName::reallyReallyReallyLongFunctionName(
-    Type parName1,  // 4 space indent
-    Type parName2,
-    Type parName3) {
+  Type parName1, // 2 space indent
+  Type parName2,
+  Type parName3
+) {
   doSomething();  // 2 space indent
   ...
 }
@@ -5351,9 +5343,222 @@ to avoid this.</p>
 <p>OK, enough writing about writing code; the code itself is much
 more interesting. Have fun!</p>
 
+<h2 id="Major_Differences_with_the_Google_Guide">Major Differences with the Google Guide</h2>
+
+<h3 id="Normative_Differences">Normative Differences</h3>
+
+<h4 id="File_Extension">File Extension</h4>
+
+<p>While Google use <code>.cc</code>, I use <code>.cpp</code>. The <code>.cpp</code>
+extension is used commonly in ACM class of SJTU.</p>
+
+<h4 id="Use_CXX_Exceptions">Use C++ Exceptions</h4>
+
+<blockquote>
+  <p>
+    Because most existing C++ code at
+    Google is not prepared to deal with exceptions, it is
+    comparatively difficult (to Google) to adopt new code that generates
+    exceptions.
+  </p>
+  <footer>⸺<cite><a href="https://google.github.io/styleguide/cppguide.html" rel="noopener noreferer">Google C++ Style Guide</a></cite></footer>
+</blockquote>
+
+<p>I do not use existing C++ code at Google, so I see no point not using C++ exceptions.</p>
+
+<h4 id="Mixed_Case_Naming">Mixed Case Naming</h4>
+
+<p>
+  I use lowercase mixed case (<code>camelCase</code>) naming for variables and functions,
+  while Google use <code>snake_case</code> for variables and <code>PascalCase</code> for functions.
+</p>
+
+<pre>// Alan's style
+std::string tableName;
+void addTableEntry () {}
+</pre>
+<pre class="badcode">// Google style
+std::string table_name;
+void AddTableEntry() {}
+</pre>
+
+<p class="pros"></p>
+<ul>
+  <li>
+    Classes (and structs) and functions are different kinds of things; they should use different naming styles.
+  </li>
+  <li>
+    Functions and variables are the same thing; they should use the same naming style. For example:
+    <pre>class Class {};
+struct Struct {};
+typedef int Typename;
+namespace Namespace {};
+void Function () {}
+int Variable;
+
+class Foo {
+ public:
+  void bar () {}
+};
+
+int main () {
+  auto     class_ = &amp;Class;     // Error!
+  auto    struct_ = &amp;Struct;    // Error!
+  auto  typename_ = &amp;Typename;  // Error!
+  auto namespace_ = &amp;Namespace; // Error!
+  auto  function_ = &amp;Function;  // OK
+  auto    method_ = &amp;Foo::bar;  // OK
+  auto  variable_ = &amp;Variable;  // OK
+}
+</pre>
+  </li>
+  <li><code>camelCase</code> is slightly shorter than <code>snake_case</code> while retaining readability.</li>
+  <li>Other languages I use also have this style, including ECMAScript, Java and Kotlin.</li>
+</ul>
+
+<p class="cons"></p>
+<ul>
+  <li>
+    It is different with most C++ style guides.
+    (But those existing style guides already differs greatly in naming, so this should not be an issue.)
+  </li>
+  <li>
+    It is slighly harder to distinguish variables and functions.
+    (Meanwhile, mistaking a variable to be a function would not cause a lot of problem, because compilers could take care of that.)
+  </li>
+  <li>Function and variable names could possibly collide with C and C++ standard library functions.</li>
+</ul>
+
+<h4 id="Spacing">Spacing</h4>
+
+<h5>In Function Declarations</h5>
+
+<p>
+  There is a space between the function name and the open parenthesis in function declarations.
+  This helps readers to distinguish function declarations and invocations, especially in complex contexts.
+</p>
+
+<pre>// Alan's style
+void foo () {}
+class Class {
+ public:
+  Class () {}
+  void bar () {}
+}
+auto baz = [] () {}
+</pre>
+<pre class="badcode">// Google style
+void Foo() {}
+class Class {
+ public:
+  Class() {}
+  void Bar() {}
+}
+auto Baz = []() {}
+</pre>
+
+<h5>Long function calls and definitions</h5>
+
+<p>
+  Google use 4 spaces to indent long function call or definition, while I use 2, with a wrap before the closing parenthesis.
+  This helps to clarify the end of a function call or definition.
+</p>
+
+<p>
+  <strong>Note:</strong> C++ does not support trailing commas in function calls (<code>f(1, 2, 3,)</code> is bad).
+  In languages that support it, use a trailing comma after the last argument (aka “comma dangling”.)
+</p>
+
+<pre>// Alan's style
+bool result = doSomething(
+  argument1, // 2 space indent
+  argument2,
+  argument3,
+  argument4
+);
+</pre>
+<pre class="badcode">// Google style
+bool result = DoSomething(
+    argument1, argument2,  // 4 space indent
+    argument3, argument4);
+</pre>
+
+<h5>Single-Line If and For</h5>
+
+<p>I only allow omitting braces when the whole <code>if</code> or <code>for</code> statement is on a single line.</p>
+
+<pre>// Alan's style
+for (int i = 0; i &lt; kSomeNumber; ++i) printf("I love you\n");
+if (x == kFoo) return new Foo();
+</pre>
+<pre class="badcode">// Google style
+for (int i = 0; i &lt; kSomeNumber; ++i)
+  printf("I love you\n");
+if (x == kFoo)
+  return new Foo();
+</pre>
+
+<p>Rationale: remember this?</p>
+
+<pre class="badcode">// CVE-2014-1266
+if ((err = SSLHashSHA1.update(&hashCtx, &signedParams)) != 0)
+  goto fail;
+  goto fail;
+</pre>
+
+<h4 id="Comments">Comments</h4>
+
+<p>
+  No license boilerplate or author information.
+  They should be deducted by looking for a <code>LICENSE</code> file at the root of the repo,
+  or using <code>git blame</code>.
+</p>
+
+<p>
+  <strong>Note:</strong> Google has a large monorepo (aka <code>google3</code>) which contains code of hundreds of different licenses,
+  both free and proprietary, and it is not a Git repository. I do not.
+</p>
+
+<p>
+  I use <code>//</code> and <code>/* */</code> at the same time. <code>//</code> are for single-line comments, <code>/* */</code> are for multi-line.
+</p>
+
+<pre>// Alan's style
+/*
+ * Iterates over the contents of a GargantuanTable.
+ * @example
+ * std::unique_ptr&lt;GargantuanTableIterator&gt; iter = table-&gt;newIterator();
+ * for (iter-&gt;seek("foo"); !iter-&gt;done(); iter-&gt;next()) {
+ *   process(iter-&gt;key(), iter-&gt;value());
+ * }
+ */
+class GargantuanTableIterator {
+  ...
+};
+</pre>
+<pre class="badcode">// Google style
+// Iterates over the contents of a GargantuanTable.
+// Example:
+//    std::unique_ptr&lt;GargantuanTableIterator&gt; iter = table-&gt;NewIterator();
+//    for (iter-&gt;Seek("foo"); !iter-&gt;done(); iter-&gt;Next()) {
+//      process(iter-&gt;key(), iter-&gt;value());
+//    }
+class GargantuanTableIterator {
+  ...
+};
+</pre>
+
+<h3 id="Informative_Differences">Informative Differences</h3>
+
+<ul>
+  <li>Removed unneccesary references to Google</li>
+  <li>Removed Google-specific chapters</li>
+  <li>Added Symbolic Link's base stylesheet</li>
+</ul>
+
 <hr><br>
 
-<p><a href="#">Return to top</a> | <a href="https://symb.olic.link/?utm_source=stylecpp">Back to Symbolic Link</a></p>
+<p><a href="#">Back to top</a> | <a href="https://symb.olic.link/?utm_source=stylecpp">Back to Symbolic Link</a></p>
 </main>
 
 <script async defer data-website-id="c9e457cd-a281-43a4-8339-810f6f89a0fd" src="https://umami.keeer.net/umami.js"></script>
