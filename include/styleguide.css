@@ -235,3 +235,34 @@ address {
   display: block;
   margin-bottom: 1em;
 }
+
+@media (prefers-color-scheme: dark) {
+  table {
+    border: 1px solid #555;
+  }
+
+  td, th {
+    border: 1px solid #555;
+  }
+
+  code, samp, var {
+    background-color: #2e2e2e;
+    white-space: nowrap;
+  }
+
+  pre {
+    background-color: #2e2e2e;
+    border: 1px solid #555;
+  }
+
+  pre.prettyprint {
+    padding:6px 10px !important;
+    border:1px solid #bbb !important;
+  }
+
+  pre.bad, pre.badcode {
+    background-color: #452e2e;
+    border-top: none;
+    border-left: none;
+  }
+}
