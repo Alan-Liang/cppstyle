@@ -16,7 +16,8 @@
 
 <h2 id="C++_Version">C++ Version</h2>
 
-<p>Currently, code should target C++17, i.e., should not use C++2x
+<p>Currently, code should target C++17 or C++20 depending on the compilation environment,
+  i.e., should not use C++23
   features. The C++ version targeted by this guide will advance
   (aggressively) over time.</p>
 
@@ -26,7 +27,7 @@
   <a href="#Nonstandard_Extensions">non-standard extensions</a>.</p>
 
   <div>Consider portability to other environments
-before using features from C++14 and C++17 in your project.
+before using features from C++14, C++17 and C++20 in your project.
 </div>
 
 <h2 id="Header_Files">Header Files</h2>
@@ -1516,19 +1517,9 @@ apply to operator overloading as well.</p>
 
 <h3 id="Access_Control">Access Control</h3>
 
-<p>Make classes' data members <code>private</code>, unless they are
-<a href="#Constant_Names">constants</a>. This simplifies reasoning about invariants, at the cost
-of some easy boilerplate in the form of accessors (usually <code>const</code>) if necessary.</p>
-
-<p>For technical
-reasons, we allow data members of a test fixture class defined in a .cpp file to
-be <code>protected</code> when using
-
-
-<a href="https://github.com/google/googletest">Google
-Test</a>.
-If a test fixture class is defined outside of the .cpp file it is used in, for example in a .h file,
-make data members <code>private</code>.</p>
+<p>Only make classes' internal data members <code>private</code>, and make others public. Avoid writing
+trivial getters and setters (i.e. <code>int &getX () { return x_; } void setX (const int &value) { x_ = value; }</code>)
+This simplifies code greatly.</p>
 
 <h3 id="Declaration_Order">Declaration Order</h3>
 
