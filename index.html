@@ -1715,8 +1715,7 @@ doubt, use overloads.</p>
 
 <h3 id="trailing_return">Trailing Return Type Syntax</h3>
 
-<p>Use trailing return types only where using the ordinary syntax (leading
-  return types) is impractical or much less readable.</p>
+<p>Use trailing return types everywhere except for conversion operators.</p>
 
 <p class="definition"></p>
 <p>C++ allows two different forms of function declarations. In the older
@@ -1754,24 +1753,12 @@ doubt, use overloads.</p>
   </pre>
 
 <p class="cons"></p>
-<p>Trailing return type syntax is relatively new and it has no
-  analogue in C++-like languages such as C and Java, so some readers may
-  find it unfamiliar.</p>
-<p>Existing code bases have an enormous number of function
-  declarations that aren't going to get changed to use the new syntax,
-  so the realistic choices are using the old syntax only or using a mixture
-  of the two. Using a single version is better for uniformity of style.</p>
+<p><code>std::function</code> does not have a trailing syntax.</p>
+<p>conversion operators does not have a trailing syntax, since their return types
+  are part of their names.</p>
 
 <p class="decision"></p>
-<p>In most cases, continue to use the older style of function
-  declaration where the return type goes before the function name.
-  Use the new trailing-return-type form only in cases where it's
-  required (such as lambdas) or where, by putting the type after the
-  function's parameter list, it allows you to write the type in a much
-  more readable way. The latter case should be rare; it's mostly an
-  issue in fairly complicated template code, which is
-  <a href="#Template_metaprogramming">discouraged in most cases</a>.</p>
-
+<p>In most cases, use the trailing return type syntax.</p>
 
 
 <h2 id="Other_C++_Features">Other C++ Features</h2>
@@ -5342,6 +5329,26 @@ more interesting. Have fun!</p>
 
 <p>While Google use <code>.cc</code>, I use <code>.cpp</code>. The <code>.cpp</code>
 extension is used commonly in ACM class of SJTU.</p>
+
+<h4 id="use_trailing_return">Trailing Return Type Syntax</h4>
+
+<p>I use trailing return types all the times. Google does not.</p>
+
+<p>These are Google's reasons for not using trailing return types:</p>
+
+<blockquote>Trailing return type syntax is relatively new and it has no
+  analogue in C++-like languages such as C and Java, so some readers may
+  find it unfamiliar.</blockquote>
+
+<p>I'm more familiar with the trailing return type syntax, such as <code>A -&gt; B -&gt; (A -&gt;
+  B -&gt; C) -&gt; C</code> or <code>(A -&gt; B) -&gt; Array&lt;A&gt; -&gt; Array&lt;B&gt;</code>.</p>
+
+<blockquote>Existing code bases have an enormous number of function
+  declarations that aren't going to get changed to use the new syntax,
+  so the realistic choices are using the old syntax only or using a mixture
+  of the two. Using a single version is better for uniformity of style.</blockquote>
+
+<p>I simply do not have a large existing codebase as for Google.</p>
 
 <h4 id="Use_CXX_Exceptions">Use C++ Exceptions</h4>
 
