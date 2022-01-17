@@ -133,7 +133,7 @@ includes <code>bar.h</code>.</p>
   without an associated definition.</p>
 <pre>// In a C++ source file:
 class B;
-void FuncInB ();
+auto FuncInB () -> void;
 extern int variable_in_b;
 ABSL_DECLARE_FLAG(flag_in_b);
 </pre>
@@ -181,9 +181,9 @@ struct D : B {};
 
 // good_user.cpp:
 #include "b.h"
-void f (B*);
-void f (void*);
-void test (D* x) { f(x); }  // calls f(B*)
+auto f (B*) -> void;
+auto f (void*) -> void;
+auto test (D* x) -> void { f(x); }  // calls f(B*)
 </pre>
   If the <code>#include</code> was replaced with forward
   decls for <code>B</code> and <code>D</code>,
@@ -398,7 +398,7 @@ example:</p>
 
 <pre class="neutralcode">namespace outer {
 inline namespace inner {
-  void foo ();
+  auto foo () -> void;
 }  // namespace inner
 }  // namespace outer
 </pre>
@@ -446,7 +446,7 @@ namespace mynamespace {
 class MyClass {
  public:
   ...
-  void foo ();
+  auto foo () -> void;
 };
 
 }  // namespace mynamespace
@@ -456,7 +456,7 @@ class MyClass {
 namespace mynamespace {
 
 // Definition of functions is within scope of the namespace.
-void MyClass::foo () {
+auto MyClass::foo () -> void {
   ...
 }
 
@@ -511,7 +511,7 @@ namespace impl {  // Internal, not part of the API.
 namespace sidetable = ::pipeline_diagnostics::sidetable;
 }  // namespace impl
 
-inline void my_inline_function () {
+inline auto my_inline_function () -> void {
   // namespace alias local to a function (or method).
   namespace baz = ::foo::bar::baz;
   ...
@@ -714,7 +714,7 @@ variables marked with <code>constexpr</code> are trivially destructible.</p>
 struct X { int n; };
 const X kX[] = {{1}, {2}, {3}};  // allowed
 
-void foo () {
+auto foo () -> void {
   static const char* const kMessages[] = { "hello", "world" };  // allowed
 }
 
@@ -727,7 +727,7 @@ const std::string kFoo = "foo";
 // rule also applies to lifetime-extended temporary objects)
 const std::string&amp; kBar = StrCat("a", "b", "c");
 
-void bar() {
+auto bar() -> void {
   // bad: non-trivial destructor
   static std::map&lt;int, int&gt; kData = { { 1, 0 }, { 2, 0 }, { 3, 0 } };
 }</pre>
@@ -900,7 +900,7 @@ variables.</p>
     namespace-scope <code>thread_local</code> by defining a function or
     static method that exposes it:</p>
 
-<pre>Foo&amp; myThreadLocalFoo () {
+<pre>auto myThreadLocalFoo () -> Foo &amp; {
   thread_local Foo result = complicatedInitialization();
   return result;
 }
@@ -1016,7 +1016,7 @@ C++11's list initialization syntax:</p>
   ...
 };
 
-void func (Foo f);
+auto func (Foo f) -> void;
 </pre>
 <pre class="badcode">func({ 42, 3.14 });  // Error
 </pre>
@@ -1518,7 +1518,7 @@ apply to operator overloading as well.</p>
 <h3 id="Access_Control">Access Control</h3>
 
 <p>Only make classes' internal data members <code>private</code>, and make others public. Avoid writing
-trivial getters and setters (i.e. <code>int &getX () { return x_; } void setX (const int &value) { x_ = value; }</code>)
+trivial getters and setters (i.e. <code>auto getX () -> int&amp; { return x_; } auto setX (const int &value) -> void { x_ = value; }</code>)
 This simplifies code greatly.</p>
 
 <h3 id="Declaration_Order">Declaration Order</h3>
@@ -1631,8 +1631,8 @@ std::string_view
 
 <pre>class MyClass {
  public:
-  void analyze (const std::string &amp;text);
-  void analyze (const char *text, size_t textlen);
+  auto analyze (const std::string &amp;text) -> void;
+  auto analyze (const char *text, size_t textlen) -> void;
 };
 </pre>
 
@@ -1771,8 +1771,8 @@ doubt, use overloads.</p>
 <p> Rvalue references
 are a type of reference that can only bind to temporary
 objects. The syntax is similar to traditional reference
-syntax. For example, <code>void f(std::string&amp;&amp;
-s);</code> declares a function whose argument is an
+syntax. For example, <code>auto f(std::string&amp;&amp;
+s) -> void;</code> declares a function whose argument is an
 rvalue reference to a std::string.</p>
 
 <p id="Forwarding_references"> When the token '&amp;&amp;' is applied to
@@ -2065,7 +2065,7 @@ relationship between objects and their mocks.</p>
 objects. Consider</p>
 
 <pre>bool Base::equal (Base* other) = 0;
-bool Derived::equal (Base* other) {
+auto Derived::equal (Base* other) -> bool {
   Derived* that = dynamic_cast&lt;Derived*&gt;(other);
   if (that == nullptr)
     return false;
@@ -2764,7 +2764,7 @@ be deduced by the compiler, rather than spelled out explicitly in the code:</p>
     The compiler deduces those arguments from the types of the function
     arguments:
     <pre class="neutralcode">template &lt;typename T&gt;
-void f(T t);
+auto f(T t) -> void;
 
 f(0);  // Invokes f&lt;int&gt;(0)</pre>
   </dd>
@@ -3585,7 +3585,7 @@ but within the scope of a class, it's likely too vague.</p>
 
 <pre>class MyClass {
  public:
-  int countFooErrors (const std::vector&lt;Foo&gt;&amp; foos) {
+  auto countFooErrors (const std::vector&lt;Foo&gt;&amp; foos) -> int {
     int n = 0;  // Clear meaning given limited scope and context
     for (const auto&amp; foo : foos) {
       ...
@@ -3593,7 +3593,7 @@ but within the scope of a class, it's likely too vague.</p>
     }
     return n;
   }
-  void doSomethingImportant () {
+  auto doSomethingImportant () -> void {
     std::string fqdn = ...;  // Well-known abbreviation for Fully Qualified Domain Name
   }
  private:
@@ -3603,7 +3603,7 @@ but within the scope of a class, it's likely too vague.</p>
 
 <pre class="badcode">class MyClass {
  public:
-  int countFooErrors (const std::vector&lt;Foo&gt;&amp; foos) {
+  auto countFooErrors (const std::vector&lt;Foo&gt;&amp; foos) -> int {
     int totalNumberOfFooErrors = 0;  // Overly verbose given limited scope and context
     for (int fooIndex = 0; fooIndex &lt; foos.size(); ++fooIndex) {  // Use idiomatic `i`
       ...
@@ -3611,7 +3611,7 @@ but within the scope of a class, it's likely too vague.</p>
     }
     return totalNumberOfFooErrors;
   }
-  void doSomethingImportant () {
+  auto doSomethingImportant () -> void {
     int cstmrId = ...;  // Deletes internal letters
   }
  private:
@@ -4344,7 +4344,7 @@ not fit on a single line as you would wrap arguments in a
 <p>Functions look like this:</p>
 
 
-<pre>ReturnType ClassName::functionName (Type parName1, Type parName2) {
+<pre>auto ClassName::functionName (Type parName1, Type parName2) -> ReturnType {
   doSomething();
   ...
 }
@@ -4352,11 +4352,11 @@ not fit on a single line as you would wrap arguments in a
 
 <p>If you have too much text to fit on one line:</p>
 
-<pre>ReturnType LongClassName::reallyReallyReallyLongFunctionName(
+<pre>auto LongClassName::reallyReallyReallyLongFunctionName(
   Type parName1, // 2 space indent
   Type parName2,
   Type parName3
-) {
+) -> ReturnType {
   doSomething();  // 2 space indent
   ...
 }
@@ -4423,18 +4423,18 @@ class Circle : public Shape {
   void rotate (double radians) override;
 };
 
-void Circle::rotate (double /* radians */) {}
+auto Circle::rotate (double /* radians */) -> void {}
 </pre>
 
 <pre class="badcode">// Bad - if someone wants to implement later, it's not clear what the
 // variable means.
-void Circle::rotate (double) {}
+autp Circle::rotate (double) -> void {}
 </pre>
 
 <p>Attributes, and macros that expand to attributes, appear at the very
 beginning of the function declaration or definition, before the
 return type:</p>
-<pre>ABSL_MUST_USE_RESULT bool isOk ();
+<pre>ABSL_MUST_USE_RESULT auto isOk () -> bool;
 </pre>
 
 <h3 id="Formatting_Lambda_Expressions">Lambda Expressions</h3>
@@ -4809,7 +4809,7 @@ asterisk/ampersand.</p>
 
 <pre>char *c;
 const std::string &amp;str;
-int *getPointer ();
+auto getPointer () -> int *;
 std::vector&lt;char *&gt;
 </pre>
 
@@ -4956,15 +4956,15 @@ needed) is:</p>
   explicit MyClass (int var);
   ~MyClass () {}
 
-  void someFunction ();
-  void someFunctionThatDoesNothing () {
+  auto someFunction () -> void;
+  auto someFunctionThatDoesNothing () -> void {
   }
 
-  void setSomeVar (int var) { someVar_ = var; }
-  int someVar () const { return someVar_; }
+  auto setSomeVar (int var) -> void { someVar_ = var; }
+  auto someVar () const -> int { return someVar_; }
 
  private:
-  bool someInternalFunction ();
+  auto someInternalFunction () -> bool;
 
   int someVar_;
   int someOtherVar_;
@@ -5041,7 +5041,7 @@ extra level of indentation. For example, use:</p>
 
 <pre>namespace {
 
-void foo () {  // Correct.  No extra indentation within namespace.
+auto foo () -> void {  // Correct.  No extra indentation within namespace.
   ...
 }
 
@@ -5053,7 +5053,7 @@ void foo () {  // Correct.  No extra indentation within namespace.
 <pre class="badcode">namespace {
 
   // Wrong!  Indented when it should not be.
-  void foo () {
+  auto foo () -> void {
     ...
   }
 
@@ -5067,7 +5067,7 @@ trailing whitespace at the end of a line.</p>
 
 <h4>General</h4>
 
-<pre>void f (bool b) {  // Open braces should always have a space before them.
+<pre>auto f (bool b) -> void {  // Open braces should always have a space before them.
   ...
 int i = 0;  // Semicolons usually have no space before them.
 // Spaces inside braces for braced-init-list are optional but recommended.  If you use them,
@@ -5081,7 +5081,7 @@ class Foo : public Bar {
   // For inline function implementations, put spaces between the braces
   // and the implementation itself.
   Foo (int b) : Bar(), baz_(b) {}  // No spaces inside empty braces.
-  void reset () { baz_ = 0; }  // Spaces separating braces from implementation.
+  auto reset () -> void { baz_ = 0; }  // Spaces separating braces from implementation.
   ...
 </pre>
 
@@ -5373,7 +5373,7 @@ extension is used commonly in ACM class of SJTU.</p>
 
 <pre>// Alan's style
 std::string tableName;
-void addTableEntry () {}
+auto addTableEntry () -> void {}
 </pre>
 <pre class="badcode">// Google style
 std::string table_name;
@@ -5391,12 +5391,12 @@ void AddTableEntry() {}
 struct Struct {};
 typedef int Typename;
 namespace Namespace {};
-void Function () {}
+auto Function () -> void {}
 int Variable;
 
 class Foo {
  public:
-  void bar () {}
+  auto bar () -> void {}
 };
 
 int main () {
@@ -5437,11 +5437,11 @@ int main () {
 </p>
 
 <pre>// Alan's style
-void foo () {}
+auto foo () -> void {}
 class Class {
  public:
   Class () {}
-  void bar () {}
+  auto bar () -> void {}
 }
 auto baz = [] () {}
 </pre>
